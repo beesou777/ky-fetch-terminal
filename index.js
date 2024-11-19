@@ -2,6 +2,9 @@ import { clear } from 'console';
 import ky from 'ky';
 import readline from 'readline';
 
+// Global token variable to store the authorization token
+let authToken = null; 
+
 // Create an instance of `ky` with a base URL
 const bishwa = ky.create({
   prefixUrl: 'https://jsonplaceholder.typicode.com',
@@ -9,12 +12,31 @@ const bishwa = ky.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  hooks: {
+    beforeRequest: [
+      (request) => {
+        if (authToken) {
+          request.headers.set('Authorization', `Bearer ${authToken}`);
+        }
+      },
+    ],
+  },
 });
 
 // Define the available commands
 const commands = {
+  settoken(token) {
+    try {
+      authToken = token;
+      console.log('Token set successfully!');
+    }
+    catch(error) {
+      console.error('Set Token Error:', error.message);
+    }
+  },
   async get(endpoint) {
     try {
+
       const response = await bishwa.get(endpoint).json();
       console.log('GET Response:', JSON.stringify(response, null, 2));
     } catch (error) {
@@ -79,6 +101,7 @@ const commands = {
   patch <endpoint> <body>  Partially update a resource (body should be a JSON string).
   delete <endpoint>        Delete a resource from the server.
   head <endpoint>          Fetch only headers and status of a resource.
+  settoken <token>         Set the authorization token.
   exit                     Exit the terminal.
   help                     Display this help message.
     `);
