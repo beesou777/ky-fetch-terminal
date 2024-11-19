@@ -134,7 +134,7 @@ Screen cleared! Type "help" for available commands.
 
 ## **Configuration**
 
-You can modify the base URL, timeout, or headers in the `terminal.js` file:
+You can modify the base URL, timeout, or headers in the `index.js` file:
 
 ```javascript
 const apiClient = ky.create({
